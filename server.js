@@ -1,15 +1,27 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const jobRoutes = require('./routes/jobs');
-const connectDB = require('./config/db');
+const jobRoutes = require("./routes/jobs");
+const connectDB = require("./config/db");
 const port = process.env.PORT || 4000;
-const cors = require('cors');
+const cors = require("cors");
+const allowedOrigins = ["https://stacklearning.in", "http://localhost:5173"];
 
-connectDB()
-app.use(cors());
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST"],
+  allowedHeaders: ["authkey", "Content-Type"],
+};
+connectDB();
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/api', jobRoutes);
+app.use("/api", jobRoutes);
 
-  app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-  });
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
