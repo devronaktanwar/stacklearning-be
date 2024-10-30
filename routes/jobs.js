@@ -1,9 +1,10 @@
 const express = require("express");
 const { generateRandomString } = require("../models/functions");
 const Job = require("../models/job");
+const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get('/all-jobs',async(req,res)=>{
+router.get('/all-jobs',authMiddleware,async(req,res)=>{
   try {
     const jobs = await Job.find(); 
     res.json(jobs); 
@@ -11,7 +12,7 @@ router.get('/all-jobs',async(req,res)=>{
     res.status(500).json({ message: 'Server Error' });
 }
 })
-router.post("/add-job", async (req, res) => {
+router.post("/add-job", authMiddleware,async (req, res) => {
   const {
     jobTitle,
     companyName,
