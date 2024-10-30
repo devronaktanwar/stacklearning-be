@@ -14,11 +14,12 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST"],
+  methods: ["GET", "POST","DELETE"],
   allowedHeaders: ["authkey", "Content-Type"],
 };
 connectDB();
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use("/api", jobRoutes);
 
