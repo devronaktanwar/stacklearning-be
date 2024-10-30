@@ -8,7 +8,7 @@ const cors = require("cors");
 connectDB();
 app.use(
   cors({
-    origin: "https://www.stacklearning.in", 
+    origin: ["https://www.stacklearning.in","http://localhost:5173"], 
     methods: ["GET", "POST", "DELETE"], 
     allowedHeaders: ["Content-Type", "authkey"], 
   })
