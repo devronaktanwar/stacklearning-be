@@ -28,7 +28,7 @@ router.post("/signup", authMiddleware, async (req, res) => {
       .status(201)
       .json({ isSuccess: true, message: "User created successfully", newUser });
   } catch (error) {
-    res.status(500).json({ message: error });
+    res.status(500).json({ isSuccess: false, message: error });
   }
 });
 router.post("/login", async (req, res) => {
