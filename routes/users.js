@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const authMiddleware = require("../middleware/authMiddleware");
 const router = express.Router();
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 router.post("/signup", authMiddleware, async (req, res) => {
   const { fullName, emailAddress, passWord } = req.body;
@@ -25,9 +25,16 @@ router.post("/signup", authMiddleware, async (req, res) => {
     });
 
     await newUser.save();
+    const user = await User.findOne({ emailAddress });
+    const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
     res
       .status(201)
-      .json({ isSuccess: true, message: "User created successfully", newUser });
+      .json({
+        isSuccess: true,
+        message: "User created successfully",
+        user: newUser,
+        token:token
+      });
   } catch (error) {
     res.status(500).json({ isSuccess: false, message: error });
   }
@@ -54,11 +61,13 @@ router.post("/login", async (req, res) => {
         message: "Invalid password",
       });
     }
-    const token = jwt.sign({ id: existingUser._id }, 'your_jwt_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ id: existingUser._id }, "your_jwt_secret", {
+      expiresIn: "1h",
+    });
     res.status(200).json({
       isSuccess: true,
       message: "Login successful",
-      token:token,
+      token: token,
       user: {
         id: existingUser._id,
         emailAddress: existingUser.emailAddress,
@@ -66,7 +75,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (err) {
-    console.log("Error:",err)
+    console.log("Error:", err);
   }
 });
 module.exports = router;
