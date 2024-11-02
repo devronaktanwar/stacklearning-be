@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 function generateRandomString(length) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let result = "";
@@ -10,5 +12,8 @@ function generateRandomString(length) {
     return result;
   }
   
-  module.exports = {generateRandomString};
+  const generateOTP = () => {
+    return crypto.randomInt(1000, 9999).toString();
+  };
+  module.exports = {generateRandomString,generateOTP};
   
