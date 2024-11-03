@@ -128,4 +128,23 @@ router.post("/send-otp", async (req, res) => {
     });
   });
 });
+
+router.post("/verify-otp", (req, res) => {
+  const { userInputOtp } = req.body;
+  console.log("session----",req.session)
+  console.log("User input OTP:", userInputOtp);
+  console.log("Session OTP:", req.session.OTP);
+
+  if (req.session.OTP === userInputOtp) {
+    return res.json({
+      isSuccess: true,
+      message: "OTP Verified Successfully",
+    });
+  }
+
+  return res.json({
+    isSuccess: false,
+    message: "Invalid OTP",
+  });
+});
 module.exports = router;
