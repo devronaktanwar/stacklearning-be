@@ -21,6 +21,7 @@ app.use(
     origin: ["https://www.stacklearning.in","http://localhost:5173"], 
     methods: ["GET", "POST", "DELETE"], 
     allowedHeaders: ["Content-Type", "authkey"], 
+    credentials:true
   })
 );app.use(express.json());
 app.use("/api", jobRoutes);
