@@ -2,6 +2,7 @@ const express = require("express");
 const { generateRandomString } = require("../models/functions");
 const Job = require("../models/job");
 const authMiddleware = require("../middleware/authMiddleware");
+const User = require("../models/user");
 const router = express.Router();
 
 router.get("/all-jobs", authMiddleware, async (req, res) => {
@@ -63,12 +64,11 @@ router.post("/add-job", authMiddleware, async (req, res) => {
   }
 });
 
-router.delete("/job/:jobId", authMiddleware,async (req, res) => {
+router.delete("/job/:jobId", authMiddleware, async (req, res) => {
   const { jobId } = req.params;
 
   try {
-    const deletedJob = await Job.findOneAndDelete({jobId:jobId});
-    console.log("firs----t",deletedJob)
+    const deletedJob = await Job.findOneAndDelete({ jobId: jobId });
     if (!deletedJob) {
       return res.status(404).json({ message: "Job not found" });
     }
@@ -87,4 +87,36 @@ router.delete("/job/:jobId", authMiddleware,async (req, res) => {
   }
 });
 
+router.post("/jobs/save", async (req, res) => {
+  const { emailAddress, jobId } = req.body;
+  try {
+    const user = await User.findOne({ emailAddress: emailAddress });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.savedJobs.includes(jobId)) {
+      user.savedJobs.push(jobId);
+      await user.save();
+    }
+
+    res.status(200).json({ message: "Job saved successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.get("/jobs/saved/:emailAddress", async (req, res) => {
+  const { emailAddress } = req.params;
+
+  try {
+    console.log(1);
+    const user = await User.findOne({ emailAddress: emailAddress });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ isSuccess: true, savedJobs: user.savedJobs });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 module.exports = router;
