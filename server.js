@@ -12,18 +12,23 @@ app.use(
   session({
     secret: "ZXCVBNM",
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false, httpOnly: true }, // Adjust secure if you're using HTTPS in production
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 10 * 60 * 1000,
+      secure: false,
+      httpOnly: true,
+    },
   })
 );
 app.use(
   cors({
-    origin: ["https://www.stacklearning.in","http://localhost:5173"], 
-    methods: ["GET", "POST", "DELETE"], 
-    allowedHeaders: ["Content-Type", "authkey"], 
-    credentials:true
+    origin: ["https://www.stacklearning.in", "http://localhost:5173"],
+    methods: ["GET", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "authkey"],
+    credentials: true,
   })
-);app.use(express.json());
+);
+app.use(express.json());
 app.use("/api", jobRoutes);
 app.use("/api", userRoutes);
 

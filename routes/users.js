@@ -98,13 +98,6 @@ router.post("/send-otp", async (req, res) => {
   const otp = generateOTP();
 
   req.session.OTP = otp; 
-  req.session.save((err) => {
-    if (err) {
-      console.log("Failed to save session:", err);
-      return res
-        .status(500)
-        .json({ isSuccess: false, message: "Failed to save session" });
-    }
     // Mail options
     const mailOptions = {
       from: "ronak@orufy.com",
@@ -124,18 +117,15 @@ router.post("/send-otp", async (req, res) => {
       console.log("Email sent: " + info.response);
       res
         .status(200)
-        .json({ isSuccess: true, message: "OTP sent successfully",otp:otp });
+        .json({ isSuccess: true, message: "OTP sent successfully" });
     });
   });
-});
 
 router.post("/verify-otp", (req, res) => {
   const { userInputOtp } = req.body;
-  console.log("session----",req.session)
-  console.log("User input OTP:", userInputOtp);
-  console.log("Session OTP:", req.session.OTP);
 
   if (req.session.OTP === userInputOtp) {
+    req.session.OTP = null;
     return res.json({
       isSuccess: true,
       message: "OTP Verified Successfully",
