@@ -18,21 +18,12 @@ app.use(
 );
 app.use(
   cors({
-    origin: ["https://www.stacklearning.in", "http://localhost:5173"],
-    methods: ["GET", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "authkey"],
-    credentials: true,
+    origin: ["https://www.stacklearning.in","http://localhost:5173"], 
+    methods: ["GET", "POST", "DELETE"], 
+    allowedHeaders: ["Content-Type", "authkey"], 
+    credentials:true
   })
-);
-app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "dist/index.html"), function (err) {
-    if (err) {
-      res.status(500).send(err);
-    }
-  });
-});
-
-app.use(express.json());
+);app.use(express.json());
 app.use("/api", jobRoutes);
 app.use("/api", userRoutes);
 
