@@ -88,29 +88,36 @@ router.delete("/job/:jobId", authMiddleware, async (req, res) => {
 });
 
 router.post("/jobs/save", async (req, res) => {
-  const { emailAddress, jobId } = req.body;
+  const { userId, jobId } = req.body;
+
   try {
-    const user = await User.findOne({ emailAddress: emailAddress });
+    const user = await User.findOne({ userId });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user.savedJobs.includes(jobId)) {
-      user.savedJobs.push(jobId);
+    const job = await Job.findOne({ jobId });
+    console.log("JOB",job)
+    if (!job) return res.status(404).json({ message: "Job not found" });
+
+    const isJobSaved = user?.savedJobs?.some(savedJob => savedJob.jobId === jobId);
+    if (!isJobSaved) {
+      user.savedJobs.push(job);
       await user.save();
     }
-
-    res.status(200).json({ message: "Job saved successfully" });
+    res.status(200).json({ message: "Job saved successfully", savedJobs: user.savedJobs });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-router.get("/jobs/saved/:emailAddress", async (req, res) => {
-  const { emailAddress } = req.params;
+
+router.get("/jobs/saved/:userId", async (req, res) => {
+  const { userId } = req.params;
+  console.log(userId)
 
   try {
-    console.log(1);
-    const user = await User.findOne({ emailAddress: emailAddress });
+    const user = await User.findOne({ userId });
+    console.log(user)
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({ isSuccess: true, savedJobs: user.savedJobs });
