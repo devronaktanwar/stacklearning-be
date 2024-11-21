@@ -22,7 +22,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: ["https://www.stacklearning.in", "http://localhost:5173","https://betastacklearning.vercel.app/"],
+    origin: ["https://www.stacklearning.in", "http://localhost:5173","https://betastacklearning.vercel.app"],
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "authkey"],
     credentials: true,
