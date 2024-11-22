@@ -95,35 +95,51 @@ router.post("/jobs/save", async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const job = await Job.findOne({ jobId });
-    console.log("JOB",job)
+    console.log("JOB", job);
     if (!job) return res.status(404).json({ message: "Job not found" });
 
-    const isJobSaved = user?.savedJobs?.some(savedJob => savedJob.jobId === jobId);
+    const isJobSaved = user?.savedJobs?.some(
+      (savedJob) => savedJob.jobId === jobId
+    );
     if (!isJobSaved) {
       user.savedJobs.push(job);
       await user.save();
     }
-    res.status(200).json({ message: "Job saved successfully", savedJobs: user.savedJobs });
+    res
+      .status(200)
+      .json({ message: "Job saved successfully", savedJobs: user.savedJobs });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
 
-
 router.get("/jobs/saved/:userId", async (req, res) => {
   const { userId } = req.params;
-  console.log(userId)
+  console.log(userId);
 
   try {
     const user = await User.findOne({ userId });
-    console.log(user)
+    console.log(user);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({ isSuccess: true, savedJobs: user.savedJobs });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
+  }
+});
+router.get("/get-job-detail/:jobId", async (req, res) => {
+  try {
+    const jobId = req.params.jobId;
+    const job = await Job.findOne({ jobId: jobId });
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    res.json(job);
+  } catch (error) {
+    res.status(500).json({ message: error });
   }
 });
 module.exports = router;
