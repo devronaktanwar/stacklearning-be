@@ -95,7 +95,14 @@ router.post("/login", async (req, res) => {
 
 router.post("/send-otp", async (req, res) => {
   const { emailAddress } = req.body;
+  const existingUser = await User.findOne({ emailAddress });
 
+  if(existingUser){
+    return res.json({
+      isSuccess:false,
+      message:"User already exists"
+    })
+  }
   const otp = generateOTP();
   const otpData = new Otp({
     emailAddress,
@@ -109,7 +116,6 @@ router.post("/send-otp", async (req, res) => {
     text: `Your OTP is: ${otp}`,
   };
 
-  // Send email
   try {
     await Otp.findOneAndDelete({ emailAddress: emailAddress });
     await otpData.save();
