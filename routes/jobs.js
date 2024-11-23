@@ -142,4 +142,17 @@ router.get("/get-job-detail/:jobId", async (req, res) => {
     res.status(500).json({ message: error });
   }
 });
+router.get("/get-jobs-by-domain/:domain", async (req, res) => {
+  try {
+    const domain = req.params.domain;
+    const jobs = await Job.find({ domain: domain });
+
+    if (!jobs) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    res.json(jobs);
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
 module.exports = router;
