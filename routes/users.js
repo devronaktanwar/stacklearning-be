@@ -149,6 +149,59 @@ router.post("/subscribe-newsletter", async (req, res) => {
     res
       .status(201)
       .json({ message: "Subscription successful", data: newSubscription });
+    const mailOptions = {
+      from: "ronak@orufy.com",
+      to: email,
+      subject: "Welcom to StackJobs Newsletter",
+      html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription Confirmation</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f9; color: #333;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+    <tr>
+      <td style="background-color: #25a983; padding: 20px; text-align: center; color: #ffffff;">
+        <h1 style="margin: 0; font-size: 24px;">Welcome to StackJobs Newsletter</h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 20px; text-align: left;">
+        <p style="margin: 0; font-size: 16px;">Hi there,</p>
+        <p style="margin: 10px 0 20px; font-size: 14px; line-height: 1.6;">
+          Thank you for subscribing to our newsletter! We're thrilled to have you on board. You'll now receive the latest updates, news, and exclusive content directly in your inbox.
+        </p>
+        <p style="margin: 0; font-size: 14px;">Stay tuned for exciting updates!</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 20px; text-align: center;">
+        <a href="https://stacklearning.in" style="display: inline-block; padding: 10px 20px; background-color: #25a983; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 14px;">Visit Our Website</a>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: #f4f4f9; padding: 10px; text-align: center; font-size: 12px; color: #666;">
+        <p style="margin: 0;">You're receiving this email because you subscribed to our newsletter.</p>
+        <p style="margin: 5px 0;">If you didn't subscribe, you can <a href="[UNSUBSCRIBE-LINK]" style="color: #25a983; text-decoration: none;">unsubscribe here</a>.</p>
+        <p style="margin: 0;">&copy; Stacklearning 2024. All rights reserved.</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+        return res
+          .status(500)
+          .json({ isSuccess: false, message: "Failed to send email" });
+      }
+      console.log("Email sent: " + info.response);
+    });
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).json({ message: "This email is already subscribed" });
