@@ -111,7 +111,7 @@ router.post("/send-otp", async (req, res) => {
 
   // Send email
   try {
-    await Otp.findOneAndDelete({ emailAddress:emailAddress });
+    await Otp.findOneAndDelete({ emailAddress: emailAddress });
     await otpData.save();
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -134,7 +134,6 @@ router.post("/verify-otp", async (req, res) => {
   const { userInputOtp, email } = req.body;
   const otpRecord = await Otp.findOne({ emailAddress: email });
 
-  console.log(otpRecord)
   if (!otpRecord) {
     return res
       .status(400)
@@ -158,15 +157,19 @@ router.post("/subscribe-newsletter", async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+      return res
+        .status(400)
+        .json({ isSuccess: false, message: "Email is required" });
     }
 
     const newSubscription = new Newsletter({ email });
     await newSubscription.save();
 
-    res
-      .status(201)
-      .json({ message: "Subscription successful", data: newSubscription });
+    res.status(201).json({
+      isSuccess: true,
+      message: "Subscription successful",
+      data: newSubscription,
+    });
     const mailOptions = {
       from: "ronak@orufy.com",
       to: email,
@@ -222,11 +225,20 @@ router.post("/subscribe-newsletter", async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      res.status(400).json({ message: "This email is already subscribed" });
+      res
+        .status(400)
+        .json({
+          isSuccess: false,
+          message: "This email is already subscribed",
+        });
     } else {
       res
         .status(500)
-        .json({ message: "An error occurred", error: error.message });
+        .json({
+          isSuccess: false,
+          message: "An error occurred",
+          error: error.message,
+        });
     }
   }
 });
