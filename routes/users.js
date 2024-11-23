@@ -111,6 +111,7 @@ router.post("/send-otp", async (req, res) => {
 
   // Send email
   try {
+    await Otp.findOneAndDelete({ emailAddress:emailAddress });
     await otpData.save();
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -131,22 +132,21 @@ router.post("/send-otp", async (req, res) => {
 
 router.post("/verify-otp", async (req, res) => {
   const { userInputOtp, email } = req.body;
-  console.log(email);
   const otpRecord = await Otp.findOne({ emailAddress: email });
 
   console.log(otpRecord)
   if (!otpRecord) {
     return res
       .status(400)
-      .json({ success: false, message: "No OTP found for this phone" });
+      .json({ isSuccess: false, message: "No OTP found for this phone" });
   }
 
   if (otpRecord.expiresAt < Date.now()) {
-    return res.status(400).json({ success: false, message: "OTP expired" });
+    return res.status(400).json({ isSuccess: false, message: "OTP expired" });
   }
 
   if (otpRecord.otp === userInputOtp) {
-    return res.status(200).json({ success: true, message: "OTP verified" });
+    return res.status(200).json({ isSuccess: true, message: "OTP verified" });
   }
   return res.json({
     isSuccess: false,
