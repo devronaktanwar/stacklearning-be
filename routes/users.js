@@ -9,6 +9,7 @@ const session = require("express-session");
 const nodemailer = require("nodemailer");
 const { generateOTP } = require("../models/functions");
 const Newsletter = require("../models/newsletter");
+const Otp = require("../models/userOtpRecord");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -96,9 +97,11 @@ router.post("/send-otp", async (req, res) => {
   const { emailAddress } = req.body;
 
   const otp = generateOTP();
-
-  req.session.OTP = otp;
-  // Mail options
+  const otpData = new Otp({
+    emailAddress,
+    otp,
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+  });
   const mailOptions = {
     from: "ronak@orufy.com",
     to: emailAddress,
@@ -107,29 +110,44 @@ router.post("/send-otp", async (req, res) => {
   };
 
   // Send email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log("Error sending email:", error);
-      return res
-        .status(500)
-        .json({ isSuccess: false, message: "Failed to send email" });
-    }
-    console.log("Email sent: " + info.response);
-    res.status(200).json({ isSuccess: true, message: "OTP sent successfully" });
-  });
+  try {
+    await otpData.save();
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Error sending email:", error);
+        return res
+          .status(500)
+          .json({ isSuccess: false, message: "Failed to send email" });
+      }
+      console.log("Email sent: " + info.response);
+      res
+        .status(200)
+        .json({ isSuccess: true, message: "OTP sent successfully" });
+    });
+  } catch (err) {
+    console.log("Error:", err);
+  }
 });
 
-router.post("/verify-otp", (req, res) => {
-  const { userInputOtp } = req.body;
+router.post("/verify-otp", async (req, res) => {
+  const { userInputOtp, email } = req.body;
+  console.log(email);
+  const otpRecord = await Otp.findOne({ emailAddress: email });
 
-  if (req.session.OTP === userInputOtp) {
-    req.session.OTP = null;
-    return res.json({
-      isSuccess: true,
-      message: "OTP Verified Successfully",
-    });
+  console.log(otpRecord)
+  if (!otpRecord) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No OTP found for this phone" });
   }
 
+  if (otpRecord.expiresAt < Date.now()) {
+    return res.status(400).json({ success: false, message: "OTP expired" });
+  }
+
+  if (otpRecord.otp === userInputOtp) {
+    return res.status(200).json({ success: true, message: "OTP verified" });
+  }
   return res.json({
     isSuccess: false,
     message: "Invalid OTP",
