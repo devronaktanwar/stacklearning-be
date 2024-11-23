@@ -6,7 +6,7 @@ const connectDB = require("./config/db");
 const port = process.env.PORT || 3000;
 const cors = require("cors");
 const session = require("express-session");
-
+const MongoStore = require("connect-mongo");
 connectDB();
 app.use(
   session({
