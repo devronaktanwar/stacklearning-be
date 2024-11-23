@@ -13,6 +13,9 @@ app.use(
     secret: "ZXCVBNM",
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: "mongodb+srv://ronaktanwar0508:c3LCyoOIi95mdCeu@cluster0.gpz5u.mongodb.net/Stacklearning?retryWrites=true&w=majority&appName=Cluster0",
+  }),
     cookie: {
       maxAge: 10 * 60 * 1000,
       secure: false,
