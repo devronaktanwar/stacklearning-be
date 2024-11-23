@@ -8,7 +8,7 @@ const session = require("express-session");
 
 const nodemailer = require("nodemailer");
 const { generateOTP } = require("../models/functions");
-
+const Newsletter = require("../models/newsletter");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -97,29 +97,27 @@ router.post("/send-otp", async (req, res) => {
 
   const otp = generateOTP();
 
-  req.session.OTP = otp; 
-    // Mail options
-    const mailOptions = {
-      from: "ronak@orufy.com",
-      to: emailAddress,
-      subject: "OTP Verification",
-      text: `Your OTP is: ${otp}`,
-    };
+  req.session.OTP = otp;
+  // Mail options
+  const mailOptions = {
+    from: "ronak@orufy.com",
+    to: emailAddress,
+    subject: "OTP Verification",
+    text: `Your OTP is: ${otp}`,
+  };
 
-    // Send email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Error sending email:", error);
-        return res
-          .status(500)
-          .json({ isSuccess: false, message: "Failed to send email" });
-      }
-      console.log("Email sent: " + info.response);
-      res
-        .status(200)
-        .json({ isSuccess: true, message: "OTP sent successfully" });
-    });
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Error sending email:", error);
+      return res
+        .status(500)
+        .json({ isSuccess: false, message: "Failed to send email" });
+    }
+    console.log("Email sent: " + info.response);
+    res.status(200).json({ isSuccess: true, message: "OTP sent successfully" });
   });
+});
 
 router.post("/verify-otp", (req, res) => {
   const { userInputOtp } = req.body;
@@ -136,5 +134,29 @@ router.post("/verify-otp", (req, res) => {
     isSuccess: false,
     message: "Invalid OTP",
   });
+});
+
+router.post("/subscribe-newsletter", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const newSubscription = new Newsletter({ email });
+    await newSubscription.save();
+
+    res
+      .status(201)
+      .json({ message: "Subscription successful", data: newSubscription });
+  } catch (error) {
+    if (error.code === 11000) {
+      res.status(400).json({ message: "This email is already subscribed" });
+    } else {
+      res
+        .status(500)
+        .json({ message: "An error occurred", error: error.message });
+    }
+  }
 });
 module.exports = router;
