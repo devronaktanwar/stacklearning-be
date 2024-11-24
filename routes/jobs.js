@@ -91,7 +91,7 @@ router.post("/jobs/save", async (req, res) => {
   const { userId, jobId } = req.body;
 
   try {
-    const user = await User.findOne({ userId });
+    const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const job = await Job.findOne({ jobId });
