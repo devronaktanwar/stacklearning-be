@@ -95,7 +95,6 @@ router.post("/jobs/save", async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const job = await Job.findOne({ jobId });
-    console.log("JOB", job);
     if (!job) return res.status(404).json({ message: "Job not found" });
 
     const isJobSaved = user?.savedJobs?.some(
@@ -104,10 +103,17 @@ router.post("/jobs/save", async (req, res) => {
     if (!isJobSaved) {
       user.savedJobs.push(job);
       await user.save();
+      res.status(200).json({
+        isSuccess: true,
+        message: "Job saved successfully",
+        savedJobs: user.savedJobs,
+      });
     }
-    res
-      .status(200)
-      .json({ message: "Job saved successfully", savedJobs: user.savedJobs });
+    res.json({
+      isSuccess: false,
+      message: "Job is already saved",
+      savedJobs: user.savedJobs,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -116,11 +122,8 @@ router.post("/jobs/save", async (req, res) => {
 
 router.get("/jobs/saved/:userId", async (req, res) => {
   const { userId } = req.params;
-  console.log(userId);
-
   try {
     const user = await User.findOne({ userId });
-    console.log(user);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({ isSuccess: true, savedJobs: user.savedJobs });
