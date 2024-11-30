@@ -97,11 +97,11 @@ router.post("/send-otp", async (req, res) => {
   const { emailAddress } = req.body;
   const existingUser = await User.findOne({ emailAddress });
 
-  if(existingUser){
+  if (existingUser) {
     return res.json({
-      isSuccess:false,
-      message:"User already exists"
-    })
+      isSuccess: false,
+      message: "User already exists",
+    });
   }
   const otp = generateOTP();
   const otpData = new Otp({
@@ -231,41 +231,54 @@ router.post("/subscribe-newsletter", async (req, res) => {
     });
   } catch (error) {
     if (error.code === 11000) {
-      res
-        .status(400)
-        .json({
-          isSuccess: false,
-          message: "This email is already subscribed",
-        });
+      res.status(400).json({
+        isSuccess: false,
+        message: "This email is already subscribed",
+      });
     } else {
-      res
-        .status(500)
-        .json({
-          isSuccess: false,
-          message: "An error occurred",
-          error: error.message,
-        });
+      res.status(500).json({
+        isSuccess: false,
+        message: "An error occurred",
+        error: error.message,
+      });
     }
   }
 });
 
-
-router.post('/get-user-details',async(req,res)=>{
-  try{
-    const{userId}=req.body;
+router.post("/get-user-details", async (req, res) => {
+  try {
+    const { userId } = req.body;
     const userDetail = await User.findById(userId);
 
     return res.json({
-      isSuccess:true,
-      user:userDetail
-    })
-  }
-  catch(err){
-    console.log("Error:",err)
+      isSuccess: true,
+      user: userDetail,
+    });
+  } catch (err) {
+    console.log("Error:", err);
     return res.json({
-      isSuccess:false,
-      message:"something went wrong"
-    })
+      isSuccess: false,
+      message: "something went wrong",
+    });
   }
-})
+});
+
+router.post("/update-user-details", async (req, res) => {
+  try {
+    const { userId, fullName, emailAddress } = req.body;
+    const updatedUserDetails = await User.findByIdAndUpdate(userId, {
+      fullName: fullName,
+      emailAddress: emailAddress,
+    });
+    return res.json({
+      isSuccess: true,
+      updatedUser: updatedUserDetails,
+    });
+  } catch (err) {
+    return res.json({
+      isSuccess: false,
+      error: err,
+    });
+  }
+});
 module.exports = router;
