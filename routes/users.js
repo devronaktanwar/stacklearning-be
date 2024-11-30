@@ -248,4 +248,24 @@ router.post("/subscribe-newsletter", async (req, res) => {
     }
   }
 });
+
+
+router.post('/get-user-details',async(req,res)=>{
+  try{
+    const{userId}=req.body;
+    const userDetail = await User.findById(userId);
+
+    return res.json({
+      isSuccess:true,
+      user:userDetail
+    })
+  }
+  catch(err){
+    console.log("Error:",err)
+    return res.json({
+      isSuccess:false,
+      message:"something went wrong"
+    })
+  }
+})
 module.exports = router;

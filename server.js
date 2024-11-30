@@ -10,7 +10,7 @@ const session = require("express-session");
 connectDB();
 app.use(
   cors({
-    origin: ["https://www.stacklearning.in", "http://localhost:5173","https://betastacklearning.vercel.app"],
+    origin: ["https://www.stacklearning.in", "http://localhost:5173","https://betastacklearning.vercel.app","http://localhost:5174"],
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "authkey"],
     credentials: true,

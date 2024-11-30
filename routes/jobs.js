@@ -27,6 +27,7 @@ router.post("/add-job", authMiddleware, async (req, res) => {
     jobType,
     experienceRequired,
     domain,
+    jobLocationType
   } = req.body;
 
   const jobId = generateRandomString(10);
@@ -45,6 +46,7 @@ router.post("/add-job", authMiddleware, async (req, res) => {
     experienceRequired,
     jobId,
     domain,
+    jobLocationType
   };
 
   const newJob = new Job(data);

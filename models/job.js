@@ -15,7 +15,8 @@ const jobSchema = new mongoose.Schema({
     jobId: { type: String, required: true,unique:true },
     jobType: { type: String, required: true },
     domain: { type: String, required: true },
-    jobLocation: { type: String, required: false }
+    jobLocation: { type: String, required: false },
+    jobLocationType: { type: String, required: false }
 });
 
 const Job = mongoose.model('Job', jobSchema,"Jobs");
