@@ -10,6 +10,12 @@ const nodemailer = require("nodemailer");
 const { generateOTP } = require("../models/functions");
 const Newsletter = require("../models/newsletter");
 const Otp = require("../models/userOtpRecord");
+const {
+  googleLoginHandler,
+  verifyGoogleAuth,
+  signUpUser,
+  loginUser,
+} = require("../handlers/users");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -20,77 +26,12 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post("/signup", authMiddleware, async (req, res) => {
-  const { fullName, emailAddress, passWord } = req.body;
-  try {
-    const existingUser = await User.findOne({ emailAddress });
-    if (existingUser) {
-      return res.status(400).json({
-        isSuccess: false,
-        message: "User already exists",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(passWord, 10);
-
-    const newUser = new User({
-      fullName,
-      emailAddress,
-      passWord: hashedPassword,
-    });
-
-    await newUser.save();
-    const user = await User.findOne({ emailAddress });
-    const token = jwt.sign({ id: user._id }, "your_jwt_secret", {
-      expiresIn: "1h",
-    });
-    res.status(201).json({
-      isSuccess: true,
-      message: "User created successfully",
-      user: newUser,
-      token: token,
-    });
-  } catch (error) {
-    res.status(500).json({ isSuccess: false, message: error });
-  }
+  const response = await signUpUser(req.body);
+  res.send(response);
 });
 router.post("/login", async (req, res) => {
-  const { emailAddress, passWord } = req.body;
-
-  try {
-    const existingUser = await User.findOne({ emailAddress });
-    if (!existingUser) {
-      return res.status(400).json({
-        isSuccess: false,
-        message: "Invaild Email, Please Sign Up",
-      });
-    }
-    const isPasswordValid = await bcrypt.compare(
-      passWord,
-      existingUser.passWord
-    );
-
-    if (!isPasswordValid) {
-      return res.status(400).json({
-        isSuccess: false,
-        message: "Invalid password",
-      });
-    }
-    const token = jwt.sign({ id: existingUser._id }, "your_jwt_secret", {
-      expiresIn: "1h",
-    });
-    res.status(200).json({
-      isSuccess: true,
-      message: "Login successful",
-      token: token,
-      user: {
-        id: existingUser._id,
-        emailAddress: existingUser.emailAddress,
-        fullName: existingUser.fullName,
-      },
-    });
-  } catch (err) {
-    console.log("Error:", err);
-  }
+  const response = await loginUser(req.body);
+  res.send(response);
 });
 
 router.post("/send-otp", async (req, res) => {
@@ -248,8 +189,9 @@ router.post("/subscribe-newsletter", async (req, res) => {
 router.post("/get-user-details", async (req, res) => {
   try {
     const { userId } = req.body;
+    console.log("userId:", userId);
     const userDetail = await User.findById(userId);
-
+    console.log("userDetail:", userDetail);
     return res.json({
       isSuccess: true,
       user: userDetail,
@@ -280,5 +222,39 @@ router.post("/update-user-details", async (req, res) => {
       error: err,
     });
   }
+});
+
+router.post("/update-password", async (req, res) => {
+  try {
+    const { userId, oldPassword, newPassword } = req.body;
+    const userDetails = await User.findById(userId);
+    const isOldPasswordValid = await bcrypt.compare(
+      oldPassword,
+      userDetails.passWord
+    );
+
+    if (!isOldPasswordValid) {
+      return res.json({
+        isSuccess: false,
+        message: "invalid old password",
+      });
+    }
+
+    return res.json({
+      isSuccess: true,
+      message: "password changed successfully",
+    });
+  } catch (err) {}
+});
+router.get("/google", async (req, res) => {
+  const prevUrl = req.query.prevUrl ?? null;
+  const data = await googleLoginHandler({ prevUrl });
+  res.redirect(data);
+});
+
+router.get("/google/callback", async (req, res) => {
+  const { code, state } = req.query;
+  const { prevUrl, userId } = await verifyGoogleAuth({ code, state });
+  res.redirect(prevUrl);
 });
 module.exports = router;

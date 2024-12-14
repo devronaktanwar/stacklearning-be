@@ -122,18 +122,19 @@ router.post("/jobs/save", async (req, res) => {
   }
 });
 
-router.get("/jobs/saved/:userId", async (req, res) => {
-  const { userId } = req.params;
-  try {
-    const user = await User.findOne({ userId });
-    if (!user) return res.status(404).json({ message: "User not found" });
+// router.get("/jobs/saved/:userId", async (req, res) => {
+//   const { userId } = req.params;
+//   try {
+//     const user = await User.findOne({ userId });
+//     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.status(200).json({ isSuccess: true, savedJobs: user.savedJobs });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+//     res.status(200).json({ isSuccess: true, savedJobs: user.savedJobs });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
 router.get("/get-job-detail/:jobId", async (req, res) => {
   try {
     const jobId = req.params.jobId;
