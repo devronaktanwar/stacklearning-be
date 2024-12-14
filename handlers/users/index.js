@@ -1,4 +1,5 @@
 const { google } = require("googleapis");
+const bcrypt = require("bcrypt");
 const User = require("../../models/user");
 const {BASE_URL,GOOGLE_OAUTH_CLIENT_SECRET,CLIENT_ID}=process.env
 const redirectUrl = `${BASE_URL}/api/google/callback`;
