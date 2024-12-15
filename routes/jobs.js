@@ -3,6 +3,7 @@ const { generateRandomString } = require("../models/functions");
 const Job = require("../models/job");
 const authMiddleware = require("../middleware/authMiddleware");
 const User = require("../models/user");
+const { getJobResults } = require("../handlers/jobs");
 const router = express.Router();
 
 router.get("/all-jobs", authMiddleware, async (req, res) => {
@@ -161,4 +162,9 @@ router.get("/get-jobs-by-domain/:domain", async (req, res) => {
     res.status(500).json({ message: error });
   }
 });
+
+router.get('/search',async(req,res)=>{
+  const response = await getJobResults(req.query);
+  res.json(response);
+})
 module.exports = router;
