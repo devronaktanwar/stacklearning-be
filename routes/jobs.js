@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/all-jobs", authMiddleware, async (req, res) => {
   try {
     const jobs = await Job.find();
-    res.json(jobs);
+    return res.json(jobs);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -106,7 +106,7 @@ router.post("/jobs/save", async (req, res) => {
     if (!isJobSaved) {
       user.savedJobs.push(job);
       await user.save();
-      res.status(200).json({
+      return res.status(200).json({
         isSuccess: true,
         message: "Job saved successfully",
         savedJobs: user.savedJobs,
@@ -157,7 +157,7 @@ router.get("/get-jobs-by-domain/:domain", async (req, res) => {
     if (!jobs) {
       return res.status(404).json({ message: "Job not found" });
     }
-    res.json(jobs);
+    return res.json(jobs);
   } catch (error) {
     res.status(500).json({ message: error });
   }
@@ -165,6 +165,6 @@ router.get("/get-jobs-by-domain/:domain", async (req, res) => {
 
 router.get('/search',async(req,res)=>{
   const response = await getJobResults(req.query);
-  res.json(response);
+  return res.json(response);
 })
 module.exports = router;
