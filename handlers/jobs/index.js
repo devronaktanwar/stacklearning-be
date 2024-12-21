@@ -1,7 +1,7 @@
 const Job = require("../../models/job");
 
 module.exports = {
-  async getJobResults({ keyword, location }) {
+  async getJobResults({ keyword, location,company }) {
     try {
       const query = {};
       if (keyword) {
@@ -9,6 +9,9 @@ module.exports = {
       }
       if (location) {
         query.location = location;
+      }
+      if(company){
+        query.companyName = { $regex: company, $options: "i" };
       }
   
       const jobs = await Job.find(query);
@@ -19,5 +22,4 @@ module.exports = {
       return { isSuccess: false, error: err.message };
     }
   }
-  
 };
