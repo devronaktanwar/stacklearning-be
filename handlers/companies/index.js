@@ -24,14 +24,14 @@ module.exports = {
       };
     }
   },
-  getCompany: async ({ name }) => {
+  getCompany: async ({ company }) => {
     try {
       const query = {};
-      if (name) {
-        query.name = { $regex: name, $options: "i" };
+      if (company) {
+        query.name = { $regex: company, $options: "i" };
       }
-      const company = await Company.find(query);
-      return { isSuccess: true, data: company };
+      const companyDetail = await Company.find(query);
+      return { isSuccess: true, data: companyDetail };
     } catch (err) {
       console.error("Error:", err);
       return { isSuccess: false, error: err.message };
