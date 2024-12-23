@@ -1,4 +1,5 @@
 const express = require("express");
+require('dotenv').config();
 const app = express();
 const jobRoutes = require("./routes/jobs");
 const userRoutes = require("./routes/users");
@@ -12,6 +13,7 @@ connectDB();
 app.use(
   cors({
     origin: [
+      "https://www.stacklearning.in/",
       "https://www.stacklearning.in",
       "http://localhost:5173",
       "https://betastacklearning.vercel.app",

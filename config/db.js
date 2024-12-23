@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const uri = "mongodb+srv://ronaktanwar0508:c3LCyoOIi95mdCeu@cluster0.gpz5u.mongodb.net/Stacklearning?retryWrites=true&w=majority&appName=Cluster0";
+const URI = process.env.URI
 const connectDB = async () => {
     try {
-        await mongoose.connect(uri, {
+        await mongoose.connect(URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
