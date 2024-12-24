@@ -35,10 +35,10 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/send-otp", async (req, res) => {
-  const { emailAddress } = req.body;
+  const { emailAddress, isForgetFlow = false } = req.body;
   const existingUser = await User.findOne({ emailAddress });
 
-  if (existingUser) {
+  if (existingUser && !isForgetFlow) {
     return res.json({
       isSuccess: false,
       message: "User already exists",
