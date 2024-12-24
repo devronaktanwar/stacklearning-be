@@ -14,6 +14,7 @@ const {
   verifyGoogleAuth,
   signUpUser,
   loginUser,
+  resetPassword,
 } = require("../handlers/users");
 
 const transporter = nodemailer.createTransport({
