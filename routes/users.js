@@ -256,4 +256,9 @@ router.get("/google/callback", async (req, res) => {
   const { prevUrl, userId } = await verifyGoogleAuth({ code, state });
   res.redirect(prevUrl);
 });
+
+router.post("/reset-password", async (req, res) => {
+  const response = await resetPassword(req.body);
+  res.send(response);
+});
 module.exports = router;

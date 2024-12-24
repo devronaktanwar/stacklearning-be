@@ -2,7 +2,7 @@ const { google } = require("googleapis");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
-const {BASE_URL,GOOGLE_OAUTH_CLIENT_SECRET,CLIENT_ID}=process.env
+const { BASE_URL, GOOGLE_OAUTH_CLIENT_SECRET, CLIENT_ID } = process.env;
 const redirectUrl = `${BASE_URL}/api/google/callback`;
 
 const oauth2Client = new google.auth.OAuth2(
@@ -47,9 +47,9 @@ module.exports = {
       };
     } catch (err) {
       console.log("Error:", err);
-      return{
-        isSuccess:false
-      }
+      return {
+        isSuccess: false,
+      };
     }
   },
   async signUpUser({ fullName, emailAddress, passWord }) {
@@ -107,9 +107,11 @@ module.exports = {
 
       const { data: userInfo } = await oauth2.userinfo.get();
       console.log({ userInfo });
-      if(userInfo.verified_email && userInfo.email){
-        const userAlreadyExists = module.exports.checkIfEmailExists(userInfo.email);
-        console.log(userAlreadyExists)
+      if (userInfo.verified_email && userInfo.email) {
+        const userAlreadyExists = module.exports.checkIfEmailExists(
+          userInfo.email
+        );
+        console.log(userAlreadyExists);
       }
       return { prevUrl };
     } catch (error) {
@@ -127,6 +129,28 @@ module.exports = {
       return false;
     } catch (error) {
       console.error("Error checking if email exists:", error);
+    }
+  },
+
+  async resetPassword({ email, password }) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      const user = await User.findOne({
+        emailAddress: email,
+      });
+      user.passWord = hashedPassword;
+      await user.save();
+
+      return {
+        isSuccess: true,
+        message: "Password updated successfully",
+      };
+    } catch (err) {
+      console.log("Error:", err);
+      return {
+        isSuccess: false,
+        message: "something went wrong",
+      };
     }
   },
 };
