@@ -265,6 +265,10 @@ router.post("/reset-password", async (req, res) => {
 });
 router.post("/check-if-email-exists", async (req, res) => {
   const response = await checkIfEmailExists(req.body);
+
+  if (!response) {
+    return res.redirect("/signup");
+  }
   res.send(response);
 });
 module.exports = router;
