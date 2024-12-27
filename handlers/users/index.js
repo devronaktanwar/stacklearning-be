@@ -106,12 +106,10 @@ module.exports = {
       });
 
       const { data: userInfo } = await oauth2.userinfo.get();
-      console.log({ userInfo });
       if (userInfo.verified_email && userInfo.email) {
-        const userAlreadyExists = module.exports.checkIfEmailExists(
-          userInfo.email
-        );
-        console.log(userAlreadyExists);
+        const userAlreadyExists = module.exports.checkIfEmailExists({
+          email: userInfo.email,
+        });
       }
       return { prevUrl };
     } catch (error) {
@@ -120,7 +118,7 @@ module.exports = {
       return { prevUrl };
     }
   },
-  async checkIfEmailExists(emailId) {
+  async checkIfEmailExists({ emailId }) {
     try {
       const user = await User.findOne({ emailAddress: emailId });
       if (user) {

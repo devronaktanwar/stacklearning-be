@@ -15,6 +15,7 @@ const {
   signUpUser,
   loginUser,
   resetPassword,
+  checkIfEmailExists,
 } = require("../handlers/users");
 
 const transporter = nodemailer.createTransport({
@@ -51,7 +52,7 @@ router.post("/send-otp", async (req, res) => {
     expiresAt: new Date(Date.now() + 5 * 60 * 1000),
   });
   const mailOptions = {
-    from: "ronak@orufy.com",
+    from: "dev.ronaktanwar@gmail.com",
     to: emailAddress,
     subject: "OTP Verification",
     text: `Your OTP is: ${otp}`,
@@ -118,7 +119,7 @@ router.post("/subscribe-newsletter", async (req, res) => {
       data: newSubscription,
     });
     const mailOptions = {
-      from: "ronak@orufy.com",
+      from: "dev.ronaktanwar@gmail.com",
       to: email,
       subject: "Welcom to StackJobs Newsletter",
       html: `<!DOCTYPE html>
@@ -260,6 +261,10 @@ router.get("/google/callback", async (req, res) => {
 
 router.post("/reset-password", async (req, res) => {
   const response = await resetPassword(req.body);
+  res.send(response);
+});
+router.post("/check-if-email-exists", async (req, res) => {
+  const response = await checkIfEmailExists(req.body);
   res.send(response);
 });
 module.exports = router;
