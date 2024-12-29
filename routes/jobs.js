@@ -3,7 +3,7 @@ const { generateRandomString } = require("../models/functions");
 const Job = require("../models/job");
 const authMiddleware = require("../middleware/authMiddleware");
 const User = require("../models/user");
-const { getJobResults } = require("../handlers/jobs");
+const { getJobResults, markAsApplied } = require("../handlers/jobs");
 const router = express.Router();
 
 router.get("/all-jobs", authMiddleware, async (req, res) => {
@@ -28,7 +28,7 @@ router.post("/add-job", authMiddleware, async (req, res) => {
     jobType,
     experienceRequired,
     domain,
-    jobLocationType
+    jobLocationType,
   } = req.body;
 
   const jobId = generateRandomString(10);
@@ -47,7 +47,7 @@ router.post("/add-job", authMiddleware, async (req, res) => {
     experienceRequired,
     jobId,
     domain,
-    jobLocationType
+    jobLocationType,
   };
 
   const newJob = new Job(data);
@@ -123,6 +123,11 @@ router.post("/jobs/save", async (req, res) => {
   }
 });
 
+router.post("/mark-as-applied", async (req, res) => {
+  const response = await markAsApplied(req.body);
+  res.send(response);
+});
+
 // router.get("/jobs/saved/:userId", async (req, res) => {
 //   const { userId } = req.params;
 //   try {
@@ -163,8 +168,8 @@ router.get("/get-jobs-by-domain/:domain", async (req, res) => {
   }
 });
 
-router.get('/search',async(req,res)=>{
+router.get("/search", async (req, res) => {
   const response = await getJobResults(req.query);
   return res.json(response);
-})
+});
 module.exports = router;
