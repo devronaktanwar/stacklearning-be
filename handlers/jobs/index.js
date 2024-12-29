@@ -35,20 +35,23 @@ module.exports = {
       if (!isApplied) {
         user.appliedJobs.push(job);
         await user.save();
-        return res.status(200).json({
+        return {
           isSuccess: true,
           message: "Job applied sucessfully",
           appliedJobs: user.appliedJobs,
-        });
+        };
       }
-      res.json({
+      return {
         isSuccess: false,
         message: "Job already applied",
         appliedJobs: user.appliedJobs,
-      });
+      };
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      return {
+        isSuccess: false,
+        message: "something went wrong",
+      };
     }
   },
 };
