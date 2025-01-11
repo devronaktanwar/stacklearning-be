@@ -1,5 +1,5 @@
 const express = require("express");
-require('dotenv').config();
+require("dotenv").config();
 const app = express();
 const jobRoutes = require("./routes/jobs");
 const userRoutes = require("./routes/users");
@@ -18,6 +18,8 @@ app.use(
       "http://localhost:5173",
       "https://betastacklearning.vercel.app",
       "http://localhost:5174",
+      "https://www.jobscript.in/",
+      "https://www.jobscript.in",
     ],
     methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Content-Type", "authkey"],
