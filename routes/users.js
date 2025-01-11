@@ -54,7 +54,7 @@ router.post("/send-otp", async (req, res) => {
     expiresAt: new Date(Date.now() + 5 * 60 * 1000),
   });
   const mailOptions = {
-    from: "dev.ronaktanwar@gmail.com",
+    from: "support@jobscript.in",
     to: emailAddress,
     subject: "OTP Verification",
     text: `Your OTP is: ${otp}`,
@@ -121,9 +121,9 @@ router.post("/subscribe-newsletter", async (req, res) => {
       data: newSubscription,
     });
     const mailOptions = {
-      from: "dev.ronaktanwar@gmail.com",
+      from: "support@jobscript.in",
       to: email,
-      subject: "Welcom to StackJobs Newsletter",
+      subject: "Welcom to JobScript Newsletter",
       html: `<!DOCTYPE html>
 <html>
 <head>
@@ -149,14 +149,14 @@ router.post("/subscribe-newsletter", async (req, res) => {
     </tr>
     <tr>
       <td style="padding: 20px; text-align: center;">
-        <a href="https://stacklearning.in" style="display: inline-block; padding: 10px 20px; background-color: #25a983; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 14px;">Visit Our Website</a>
+        <a href="https://jobscript.in" style="display: inline-block; padding: 10px 20px; background-color: #25a983; color: #ffffff; text-decoration: none; border-radius: 4px; font-size: 14px;">Visit Our Website</a>
       </td>
     </tr>
     <tr>
       <td style="background-color: #f4f4f9; padding: 10px; text-align: center; font-size: 12px; color: #666;">
         <p style="margin: 0;">You're receiving this email because you subscribed to our newsletter.</p>
         <p style="margin: 5px 0;">If you didn't subscribe, you can <a href="[UNSUBSCRIBE-LINK]" style="color: #25a983; text-decoration: none;">unsubscribe here</a>.</p>
-        <p style="margin: 0;">&copy; Stacklearning 2024. All rights reserved.</p>
+        <p style="margin: 0;">&copy; JobScript 2024. All rights reserved.</p>
       </td>
     </tr>
   </table>
