@@ -19,12 +19,10 @@ const {
 } = require("../handlers/users");
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.titan.email',
-  port: 587,
-  secure: false,
+  service: "gmail",
   auth: {
-      user: 'support@jobscript.in', 
-      pass: 'Ronaktanwar@19105025#', 
+    user: "dev.ronaktanwar@gmail.com",
+    pass: "ltyg eggl jzmi jxyp",
   },
 });
 
