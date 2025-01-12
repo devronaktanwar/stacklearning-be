@@ -118,6 +118,17 @@ module.exports = {
       return { prevUrl };
     }
   },
+  async checkIfUserIdValid({userId}){
+    try {
+      const user = await User.findById(userId);
+      if (user) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking if email exists:", error);
+    }
+  },
   async checkIfEmailExists({ emailId }) {
     try {
       const user = await User.findOne({ emailAddress: emailId });

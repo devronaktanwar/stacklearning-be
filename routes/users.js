@@ -267,4 +267,8 @@ router.post("/check-if-email-exists", async (req, res) => {
   const response = await checkIfEmailExists(req.body);
   res.send(response);
 });
+router.post("/check-if-userId-valid", async (req, res) => {
+  const response = await checkIfUserIdValid(req.body);
+  res.send(response);
+});
 module.exports = router;
