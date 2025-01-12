@@ -20,8 +20,10 @@ app.use(
       "http://localhost:5174",
       "https://www.jobscript.in/",
       "https://www.jobscript.in",
+      "https://jobscript-admin.vercel.app/",
+      "https://jobscript-admin.vercel.app"
     ],
-    methods: ["GET", "POST", "DELETE"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "authkey"],
     credentials: true,
   })
