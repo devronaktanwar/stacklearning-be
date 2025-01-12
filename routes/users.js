@@ -16,6 +16,7 @@ const {
   loginUser,
   resetPassword,
   checkIfEmailExists,
+  checkIfUserIdValid,
 } = require("../handlers/users");
 
 const transporter = nodemailer.createTransport({
